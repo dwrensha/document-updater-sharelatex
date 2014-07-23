@@ -73,19 +73,4 @@ app.use (error, req, res, next) ->
 	else
 		res.send(500, "Oops, something went wrong")
 
-shutdownCleanly = (signal) ->
-	return () ->
-		logger.log signal: signal, "received interrupt, cleaning up"
-		Settings.shuttingDown = true
-		setTimeout () ->
-			logger.log signal: signal, "shutting down"
-			process.exit()
-		, 10000
-
-port = Settings.internal?.documentupdater?.port or Settings.apis?.documentupdater?.port or 3003
-host = Settings.internal.documentupdater.host or "localhost"
-app.listen port, host, ->
-	logger.info "Document-updater starting up, listening on #{host}:#{port}"
-
-for signal in ['SIGINT', 'SIGHUP', 'SIGQUIT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGABRT']
-	process.on signal, shutdownCleanly(signal)
+module.exports = {app:app}
